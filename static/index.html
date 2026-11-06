@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firmante Remoto Nostr (NIP-46)</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="badge">NIP-46 Remote Signer</div>
+      <h1>Firmante Nostr Seguro</h1>
+      <p class="subtitle">Custodia local cifrada en reposo (Scrypt + AES-GCM) para autenticación en Stacker News.</p>
+    </header>
+
+    <main class="grid">
+      <!-- Columna 1: Acciones de Clave -->
+      <section class="card">
+        <h2>1. Gestión de Identidad</h2>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('new')">Crear Nueva</button>
+          <button class="tab-btn" onclick="switchTab('import')">Importar nsec</button>
+          <button class="tab-btn" onclick="switchTab('unlock')">Desbloquear</button>
+        </div>
+
+        <!-- Formulario Crear Nueva -->
+        <form id="form-new" onsubmit="handleCreateKey(event)">
+          <div class="form-group">
+            <label for="passphrase-new">Passphrase de Cifrado (KDF Scrypt):</label>
+            <input type="password" id="passphrase-new" required placeholder="Ingresa una contraseña para cifrar en disco">
+            <small>La clave secreta se cifrará con AES-256-GCM y permisos 0600.</small>
+          </div>
+          <button type="submit" class="btn btn-primary">Generar Clave y Guardar Cifrada</button>
+        </form>
+
+        <!-- Formulario Importar nsec -->
+        <form id="form-import" class="hidden" onsubmit="handleImportKey(event)">
+          <div class="form-group">
+            <label for="input-nsec">Clave Secreta (nsec1... o Hex):</label>
+            <input type="password" id="input-nsec" required placeholder="nsec1... o 64 caracteres hex">
+            <small>Nunca se mostrará en logs ni viajará fuera de localhost.</small>
+          </div>
+          <div class="form-group">
+            <label for="passphrase-import">Passphrase de Cifrado:</label>
+            <input type="password" id="passphrase-import" required placeholder="Contraseña de protección local">
+          </div>
+          <button type="submit" class="btn btn-primary">Importar y Guardar Cifrada</button>
+        </form>
+
+        <!-- Formulario Desbloquear Existente -->
+        <form id="form-unlock" class="hidden" onsubmit="handleUnlockKey(event)">
+          <div class="form-group">
+            <label for="passphrase-unlock">Passphrase para Desbloquear:</label>
+            <input type="password" id="passphrase-unlock" required placeholder="Contraseña de tu clave guardada">
+            <small>Carga la clave desde $HOME/.nostr/signer.enc</small>
+          </div>
+          <button type="submit" class="btn btn-secondary">Desbloquear Firmante</button>
+        </form>
+
+        <div id="status-msg" class="status-box hidden"></div>
+      </section>
+
+      <!-- Columna 2: URI Bunker y Conexión -->
+      <section class="card">
+        <h2>2. Conexión NIP-46 (Bunker)</h2>
+        <div class="bunker-info">
+          <label>Identidad Pública (npub):</label>
+          <div class="copy-field">
+            <input type="text" id="display-npub" readonly placeholder="Ninguna clave cargada">
+            <button onclick="copyToClipboard('display-npub')">Copiar</button>
+          </div>
+
+          <label>URI Bunker para Stacker News:</label>
+          <div class="copy-field">
+            <input type="text" id="display-bunker" readonly placeholder="Carga o genera una clave primero">
+            <button class="btn-copy" onclick="copyToClipboard('display-bunker')">Copiar Bunker URI</button>
+          </div>
+          <small>Pega esta URI en Stacker News &rarr; "Connect with token or NIP-05 address".</small>
+        </div>
+
+        <div class="status-indicator">
+          <span class="dot" id="relay-dot"></span>
+          <span id="relay-status">Relay: Esperando inicialización</span>
+        </div>
+
+        <h3>Consola de Actividad en Vivo</h3>
+        <pre id="log-console" class="console">Esperando acciones...</pre>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Servidor local restringido estrictamente a <code>127.0.0.1</code> | Ministerio de Hacienda &mdash; Prueba Técnica DEV</p>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

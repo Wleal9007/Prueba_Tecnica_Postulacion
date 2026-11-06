@@ -1,0 +1,14 @@
+# Criptografía secp256k1 y BIP-340 Schnorr (bindings C a libsecp256k1)
+coincurve>=20.0.0
+cryptography>=42.0.0
+
+# Codificación canónica Nostr NIP-19 (nsec / npub)
+bech32>=1.2.0
+
+# Servidor ASGI y cliente WebSocket
+fastapi>=0.110.0
+uvicorn>=0.28.0
+websockets>=12.0
+
+# Testing
+pytest>=8.0.0
